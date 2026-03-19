@@ -1,42 +1,131 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TaskController!{% endblock %}
+{% block title %}Gestion du Village - Nook Inc.{% endblock %}
 
 {% block body %}
+<style>
+    /* Configuration générale inspirée d'Animal Crossing */
+    :root {
+        --ac-green: #78cead;
+        --ac-dark-green: #5eb594;
+        --ac-beige: #f9f6e5;
+        --ac-brown: #8d775f;
+        --ac-yellow: #fdf37a;
+        --ac-blue: #70d1f4;
+    }
 
- {# {% for task in tasks  %}
-    {{task.title}}
-    {{task.description}}
-    {% if task.isdone = "false" %}
-        {{En cours}}
-    {% else %}
-        {{terminé}}
-    {% endif %}
-{% endfor %} #}
+    body {
+        background-color: #e6f7ff; /* Un ciel bleu clair */
+        background-image: radial-gradient(#ffffff 2px, transparent 2px);
+        background-size: 40px 40px;
+        font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+        color: var(--ac-brown);
+    }
 
+    .nook-container {
+        max-width: 900px;
+        margin: 50px auto;
+        background: var(--ac-beige);
+        border: 8px solid #ffffff;
+        border-radius: 40px;
+        box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+        padding: 30px;
+        position: relative;
+    }
 
-<div class="container" >    
+    /* Le fameux badge Tom Nook */
+    .nook-header {
+        background: var(--ac-green);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 0 var(--ac-dark-green);
+    }
 
-    <table class="table newNoteTable" >
-        <thead> 
-            <tr>
-                <th>
-                    <a href="{{ path('app_new') }}" class="btn btn-success">Nouvelle tâche</a>
-                </th>
-            </tr>
-        </thead>
-    </table>
-    <div class="displayChoice ">
-        <a href="{{path('app_task')}}" class = "btn btn-success" >Toutes mes tâches</a>
-        <a href="{{path('app_task_in_progress')}}" class = "btn btn-danger">Mes tâches en cours</a>
-        <a href="{{path('app_task_done')}}" class = "btn btn-info">Mes tâches terminées</a>
+    /* Boutons personnalisés */
+    .btn-ac {
+        border-radius: 20px;
+        border: none;
+        padding: 10px 20px;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        margin: 5px;
+    }
+
+    .btn-ac:hover { transform: scale(1.05); color: white; }
+    .btn-new { background-color: var(--ac-yellow); color: #8d775f; }
+    .btn-all { background-color: var(--ac-blue); color: white; }
+    .btn-progress { background-color: #ff9d76; color: white; }
+    .btn-done { background-color: var(--ac-green); color: white; }
+
+    /* Tableau version "Papier à lettres" */
+    .noteSummary {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .noteSummary tr {
+        background: white;
+        border-radius: 15px;
+    }
+
+    .noteSummary td, .noteSummary th {
+        padding: 15px;
+        border: none;
+    }
+
+    .noteSummary tr td:first-child { border-radius: 15px 0 0 15px; }
+    .noteSummary tr td:last-child { border-radius: 0 15px 15px 0; }
+
+    /* Custom Checkbox */
+    .ac-checkbox {
+        transform: scale(1.5);
+        accent-color: var(--ac-green);
+        cursor: pointer;
+    }
+
+    .task-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--ac-brown);
+    }
+
+    .stamp-done {
+        color: var(--ac-green);
+        font-weight: bold;
+        text-transform: uppercase;
+        border: 2px solid var(--ac-green);
+        padding: 2px 5px;
+        border-radius: 5px;
+        transform: rotate(-5deg);
+        display: inline-block;
+    }
+</style>
+
+<div class="nook-container">
+    <div class="nook-header">
+        <h2 style="margin:0;">🍃 Plan de développement de l'île</h2>
     </div>
 
+    <div class="navigation-nook">
+        <a href="{{ path('app_new') }}" class="btn-ac btn-new">➕ Nouvelle corvée, oui oui !</a>
+        <hr style="border: 1px dashed #d1ccb0; margin: 20px 0;">
+        <div class="displayChoice">
+            <a href="{{path('app_task')}}" class="btn-ac btn-all">Toutes les tâches</a>
+            <a href="{{path('app_task_in_progress')}}" class="btn-ac btn-progress">En cours</a>
+            <a href="{{path('app_task_done')}}" class="btn-ac btn-done">Terminées</a>
+        </div>
+    </div>
 
-    <table class="table table-bordered noteSummary" >
+    <table class="noteSummary">
         <thead>
-            <tr>    
-                {# <th>laisser vide<th> #}
+            <tr style="background: transparent;">
                 <th>Tâche</th>
                 <th>Description</th>
                 <th>Statut</th>
@@ -46,27 +135,35 @@
         <tbody>
         {% for task in tasks %}
             <tr>
-                {# <td></td> #}
-                <td><a href="{{path('app_complete', {'id': task.id}) }}"><input type="checkbox" id="statut" name="statut" value="taskCompletion" unchecked ></a> {{task.title}}</td>
-                <td>{{task.description}}</td>
-                {% if task.isdone == true %}
-                    <td> Tâche completer</td>
-                {% else %}
-                    <td> Tâche en cours</td>                    
-                {% endif %}
+                <td class="task-title">
+                    <input type="checkbox" class="ac-checkbox" 
+                           {{ task.isdone ? 'checked' : '' }} 
+                           onchange="window.location.href='{{ path('app_complete', {'id': task.id}) }}'">
+                    {{ task.title }}
+                </td>
+                <td>{{ task.description }}</td>
                 <td>
-                    <a href="{{ path('app_edit', {'id': task.id}) }}" class="btn btn-warning">Modifier</a>
-                    <a href="#" class="btn btn-danger">Supprimer</a>
+                    {% if task.isdone %}
+                        <span class="stamp-done">Payé !</span>
+                    {% else %}
+                        <small>À faire...</small>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_edit', {'id': task.id}) }}" style="color: var(--ac-blue); text-decoration: none;">Modifier</a> | 
+                    <a href="#" style="color: #ff7676; text-decoration: none;">Annuler</a>
                 </td>
             </tr>
         {% else %}
-        <tr>
-        <td>Pas de tâche enregistré </td>
-        </tr>
+            <tr>
+                <td colspan="4" style="text-align: center;">Pas de clochettes à gagner aujourd'hui !</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
-
+    
+    <p style="text-align: right; margin-top: 20px; font-style: italic;">
+        "N'oubliez pas de rembourser votre prêt !" — <strong>Tom Nook</strong>
+    </p>
 </div>
-
 {% endblock %}

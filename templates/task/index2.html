@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TaskController!{% endblock %}
+
+{% block body %}
+
+ {# {% for task in tasks  %}
+    {{task.title}}
+    {{task.description}}
+    {% if task.isdone = "false" %}
+        {{En cours}}
+    {% else %}
+        {{terminé}}
+    {% endif %}
+{% endfor %} #}
+
+
+<div class="container" >    
+
+    <table class="table newNoteTable" >
+        <thead> 
+            <tr>
+                <th>
+                    <a href="{{ path('app_new') }}" class="btn btn-success">Nouvelle tâche</a>
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div class="displayChoice ">
+        <a href="{{path('app_task')}}" class = "btn btn-success" >Toutes mes tâches</a>
+        <a href="{{path('app_task_in_progress')}}" class = "btn btn-danger">Mes tâches en cours</a>
+        <a href="{{path('app_task_done')}}" class = "btn btn-info">Mes tâches terminées</a>
+    </div>
+
+
+    <table class="table table-bordered noteSummary" >
+        <thead>
+            <tr>    
+                {# <th>laisser vide<th> #}
+                <th>Tâche</th>
+                <th>Description</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                {# <td></td> #}
+                <td><a href="{{path('app_complete', {'id': task.id}) }}"><input type="checkbox" id="statut" name="statut" value="taskCompletion" unchecked ></a> {{task.title}}</td>
+                <td>{{task.description}}</td>
+                {% if task.isdone == true %}
+                    <td> Tâche completer</td>
+                {% else %}
+                    <td> Tâche en cours</td>                    
+                {% endif %}
+                <td>
+                    <a href="{{ path('app_edit', {'id': task.id}) }}" class="btn btn-warning">Modifier</a>
+                    <a href="#" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+        <tr>
+        <td>Pas de tâche enregistré </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}
