@@ -13,7 +13,7 @@ class TaskType extends AbstractType{
         $builder
             ->add('title')
             ->add('description')
-            ->add('is_done') 	
+            // ->add('is_done') 	
             ;
     }
     public function configureOptions(OptionsResolver $resolver): void

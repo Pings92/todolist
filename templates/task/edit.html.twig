@@ -12,5 +12,6 @@
             {# {{ form_row(form.is_done)}} #}
             <button>{{button_label|default('Modifier')}}</button>
         {{ form_end(form) }}
+        <button><a href="{{path('app_task')}}">Retour à la liste des tâches</a></button>
     </div>
 {% endblock %}

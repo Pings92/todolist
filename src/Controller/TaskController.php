@@ -24,7 +24,7 @@ final class TaskController extends AbstractController
     //     ]);
     // }
 
-    #[Route('/task', name: 'app_task')]
+    #[Route('/', name: 'app_task')]
     public function index(TaskRepository $task): Response
     {
         return $this->render('task/index.html.twig', [
@@ -53,7 +53,6 @@ final class TaskController extends AbstractController
     #[Route('/{id}/edit', name:'app_edit', methods:['GET', 'POST'])]
     public function editTask(EntityManagerInterface $entityManager, Request $request, Task $task):Response
     {
-        // $task = getTask->$VarName = $repo->findBy(['property'=>value]);;
         $form = $this->createForm(TaskUpdateType::class, $task); //
         $form->handleRequest($request);
 
@@ -65,4 +64,36 @@ final class TaskController extends AbstractController
         'form' => $form,
         ]);
     }
+//Route pour passer de true à faulse vice versa
+    #[Route ('/{id}/complete', name:'app_complete', methods:['GET', 'POST'])]
+    public function completeTask(Task $task, EntityManagerInterface $entityManager)
+    {
+        // $statut = $taskRepository->isDone();
+
+        if ($task->isDone() == true){
+            $task->setIsDone(false);
+            $entityManager->flush();
+        }else {
+            $task->setIsDone(true);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_task');
+    }
+// route pour afficher que les tâches en cours
+    #[Route('/inprogress', name:'app_task_in_progress', methods:['GET'])]
+    public function taskInProgress(TaskRepository $taskRepository)
+    {
+        return $this->render('task/index.html.twig', [
+            'tasks'=>$taskRepository->findBy(['isDone'=>false]),
+            ]);
+    }
+// route pour afficher toutes les tache completer
+    #[Route ('/taskdone', name:'app_task_done', methods:['GET'])]
+    public function taskdone(TaskRepository $taskRepository)
+    {
+        return $this->render('task/index.html.twig', [
+            'tasks'=>$taskRepository->findBy(['isDone'=>true]),
+   ]);
+   }
 }

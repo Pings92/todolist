@@ -1,3 +1,26 @@
 body {
-    background-color: skyblue;
+    background-color:#9d7153;
+}
+/* Twisted Spot Palette
+#9d7153
+#00c9ab
+#c4fcf1
+#4c8077 */
+
+.noteSummary th{
+    background-color: #00c9ab;
+}
+
+.noteSummary td{
+    background-color: #FFEBA1;
+}
+.newNoteTable th{
+    border: none;
+    background-color: #9d7153;
+}
+
+.displayChoice{
+    width: 100%;
+    display: flex;
+    align-content: space-between;    
 }
