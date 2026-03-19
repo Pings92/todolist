@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Task;
 
-class TaskType extends AbstractType{
+class TaskUpdateType extends AbstractType{
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

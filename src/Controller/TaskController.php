@@ -2,9 +2,15 @@
 
 namespace App\Controller;
 
+use App\Form\TaskType;
+use App\Form\TaskUpdateType;
+use App\Entity\Task;
+use App\Repository\TaskRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 final class TaskController extends AbstractController
 {
@@ -19,35 +25,44 @@ final class TaskController extends AbstractController
     // }
 
     #[Route('/task', name: 'app_task')]
-    // public function index(Task $task): Response
-    public function index(): Response
+    public function index(TaskRepository $task): Response
     {
-        // $form = findAll($task)
         return $this->render('task/index.html.twig', [
-            // 'task' => $form,
-            'TODO' => 'Todo'
+            'test' => 'resultat attendu',
+            'tasks' => $task->findAll()
         ]);
     }
 
-    #[Route('/new', name:'app_new')]
-    // public function addTask(EntityManangerInterface $entityManangerInterface):Response
-    public function addTask():Response
+    #[Route('/new', name:'app_new', methods: ['GET', 'POST'])]
+    public function addTask(EntityManagerInterface $entityManangerInterface, Request $request):Response
     {
-        // $task = new addTask()
-        // if ($form isValid && isSubmitted){
-        // $entityManangerInterface->get()
-        // $entityManangerInterface->flush()
-        // }
+        $task = new Task();
+        $form = $this->createForm(TaskType::class, $task);
+        $form->handleRequest($request);
 
-        return $this->render('task/index.html.twig', [
-        'TODO' => 'Todo'
+        if ($form->isSubmitted() && $form->isValid()){
+            $entityManangerInterface->persist($task);
+            $entityManangerInterface->flush();
+        }
+
+        return $this->render('task/new.html.twig', [
+        'TODO' => 'Todo',
+        'form' => $form,
         ]);
     }
-    #[Route('edit', name:'app_edit')]
-    public function modifyTask():Response
+    #[Route('/{id}/edit', name:'app_edit', methods:['GET', 'POST'])]
+    public function editTask(EntityManagerInterface $entityManager, Request $request, Task $task):Response
     {
-        return $this->render('task/index.html.twig', [
-        'TODO' => 'Todo'
+        // $task = getTask->$VarName = $repo->findBy(['property'=>value]);;
+        $form = $this->createForm(TaskUpdateType::class, $task); //
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $entityManager->flush();
+        }
+        return $this->render('task/edit.html.twig', [
+        'task' => $task,
+        'form' => $form,
         ]);
     }
 }
